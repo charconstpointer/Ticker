@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Psnfrt
+namespace Ticker
 {
     public interface ITrack
     {

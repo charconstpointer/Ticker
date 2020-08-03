@@ -1,17 +1,11 @@
 ﻿using System;
-using Ticker;
 
-namespace Psnfrt
+namespace Ticker.Tests.Mocks.Tracks
 {
     public class ExampleTrack : ITrack
     {
         public string Title { get; set; }
         public DateTime Start { get; set; }
         public DateTime Stop { get; set; }
-
-        public override string ToString()
-        {
-            return Title;
-        }
     }
 }
