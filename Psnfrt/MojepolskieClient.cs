@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Json;
@@ -25,18 +26,33 @@ namespace Psnfrt
         {
             var moje = await _httpClient.GetAsync(
                 $"{_base}?mobilestationid={id}&key=d590cafd-31c0-4eef-b102-d88ee2341b1a");
-            if (moje.IsSuccessStatusCode) return null;
-            var mojePolskieResponse =
-                JsonSerializer.Deserialize<MojepolskieResponse>(await moje.Content.ReadAsStringAsync());
-            for (var i = 0; i < mojePolskieResponse.Songs.Count() - 1; i++)
+            if (!moje.IsSuccessStatusCode) return null;
+            if (id == 68)
             {
-                var current = mojePolskieResponse.Songs.ElementAt(i);
-                var next = mojePolskieResponse.Songs.ElementAt(i + 1);
-                current.Stop = next.ScheduleTime;
+                
             }
+            try
+            {
+                var mojePolskieResponse =
+                    JsonSerializer.Deserialize<MojepolskieResponse>(await moje.Content.ReadAsStringAsync());
+                if (!mojePolskieResponse.Songs.Any())
+                {
+                    return null;
+                }
+                for (var i = 0; i < mojePolskieResponse.Songs.Count() - 1; i++)
+                {
+                    var current = mojePolskieResponse.Songs.ElementAt(i);
+                    var next = mojePolskieResponse.Songs.ElementAt(i + 1);
+                    current.Stop = next.ScheduleTime;
+                }
 
-            var tracks = mojePolskieResponse.AsEntity();
-            return tracks;
+                var tracks = mojePolskieResponse.AsEntity();
+                return tracks;
+            }
+            catch (Exception e)
+            {
+                return null;
+            }
         }
     }
 }

@@ -26,12 +26,9 @@ namespace Ticker
 
         public T Next()
         {
-            if (_tracks.TryPeek(out var next))
-            {
-                return next;
-            }
+            return _tracks.TryPeek(out var next) ? next : default;
 
-            throw new ApplicationException($"Playlist #{_id} #{_title} is empty");
+            // throw new ApplicationException($"Playlist #{_id} #{_title} is empty");
         }
 
         public bool TryGetNext(out T track)
@@ -54,7 +51,10 @@ namespace Ticker
                 _tracks.Enqueue(track);
             }
 
-            _current ??= _tracks.Dequeue();
+            if (_current is null && _tracks.TryDequeue(out var current))
+            {
+                _current = current;
+            }
         }
 
         public void PopTrack()
