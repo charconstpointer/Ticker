@@ -34,7 +34,7 @@ namespace Ticker
                         continue;
                     }
 
-                    var isOutdated = channel.Current()?.Start < DateTime.UtcNow.AddHours(2);
+                    var isOutdated = channel.Current()?.Stop < DateTime.UtcNow.AddHours(2);
                     if (!isOutdated) continue;
                     if (!channel.TryGetNext(out _))
                     {

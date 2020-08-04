@@ -2,6 +2,12 @@
 
     <PropertyGroup>
         <TargetFramework>netcoreapp3.1</TargetFramework>
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+        <Title>Ticker</Title>
+        <PackageProjectUrl>https://github.com/charconstpointer/Ticker</PackageProjectUrl>
+        <PackageLicenseUrl>https://licenses.nuget.org/(MIT)</PackageLicenseUrl>
+        <RepositoryUrl>https://github.com/charconstpointer/Ticker</RepositoryUrl>
+        <RepositoryType>git</RepositoryType>
     </PropertyGroup>
 
 </Project>
