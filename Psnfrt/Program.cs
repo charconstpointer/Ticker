@@ -21,7 +21,7 @@ namespace Psnfrt
                 var key = $"mojepolskie.{i}";
                 ticker.AddChannel(key, tracks);
                 ticker.TrackChanged += OnTickerOnTrackChanged;
-                Console.WriteLine($"Channel : {i} {Environment.NewLine} " +
+                Console.WriteLine($"Channel : {i} {Environment.NewLine}" +
                                   $"Current track : {((MojepolskieTrack) ticker[key]?.Current())?.Title} {Environment.NewLine}" +
                                   $"Next track : {((MojepolskieTrack) ticker[key]?.Next())?.Title ?? "🙊"} {Environment.NewLine}");
                
@@ -33,9 +33,9 @@ namespace Psnfrt
         private static void OnTickerOnTrackChanged(object? sender, TrackChanged<ITrack> changed)
         {
             Console.ForegroundColor = ConsoleColor.DarkCyan;
-            Console.WriteLine($"Channel : {changed.Channel} {Environment.NewLine} " +
-                              $"Current track : {((MojepolskieTrack) changed.Current).Title} {Environment.NewLine}" +
-                              $"Next track : {((MojepolskieTrack) changed.Next)?.Title ?? "🙊"} {Environment.NewLine}");
+            Console.WriteLine($"🎭Channel : {changed.Channel} {Environment.NewLine}" +
+                              $"🎵Current track : {((MojepolskieTrack) changed.Current).Title} {Environment.NewLine}" +
+                              $"⏭Next track : {((MojepolskieTrack) changed.Next)?.Title ?? "🙊"} {Environment.NewLine}");
             Console.ForegroundColor = ConsoleColor.White;
         }
     }

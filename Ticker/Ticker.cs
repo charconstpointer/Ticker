@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace Ticker
@@ -14,6 +13,7 @@ namespace Ticker
         private readonly Thread _watcher;
         public Playlist<ITrack> this[string index] => _playlists[index];
         public event EventHandler<TrackChanged<ITrack>> TrackChanged;
+        public event EventHandler<PlaylistEnded> PlaylistEnded;
 
 
         public Ticker()
@@ -36,27 +36,33 @@ namespace Ticker
 
                     var isOutdated = channel.Current()?.Start < DateTime.UtcNow.AddHours(2);
                     if (!isOutdated) continue;
-                    if (!channel.TryGetNext(out _)) continue;
-                    channel.PopTrack();
-                    var current = channel.Current();
-                    channel.TryGetNext(out var next);
-                    OnTrackChanged(channel.Title, current, next);
+                    if (!channel.TryGetNext(out _))
+                    {
+                        OnPlaylistEnded(channel.Title);
+                        _playlists.Remove(playlistsKey, out _);
+                        // channel.PopTrack();
+                    }
+                    else
+                    {
+                        channel.PopTrack();
+                        var current = channel.Current();
+                        channel.TryGetNext(out var next);
+                        OnTrackChanged(channel.Title, current, next);
+                    }
                 }
-                // foreach (var (channelId, playlist) in _playlists.Where(c =>
-                //     c.Value?.Current()?.Stop < DateTime.UtcNow.AddHours(2)))
-                // {
-                //     if(playlist is null) continue;
-                //     if (!playlist.TryGetNext(out _)) continue;
-                //     playlist.PopTrack();
-                //     var current = playlist.Current();
-                //     playlist.TryGetNext(out var next);
-                //     OnTrackChanged(channelId, current, next);
-                // }
 
                 Thread.Sleep(TimeSpan.FromSeconds(1));
             }
 
             // ReSharper disable once FunctionNeverReturns
+        }
+
+        public void AddChannel(string key, IEnumerable<ITrack> tracks)
+        {
+            if (_playlists.TryGetValue(key, out var channel)) return;
+            channel = new Playlist<ITrack>(key);
+            channel.AddTracks(tracks);
+            _playlists[key] = channel;
         }
 
         private void OnTrackChanged(string channel, ITrack current, ITrack next)
@@ -69,12 +75,12 @@ namespace Ticker
             });
         }
 
-        public void AddChannel(string key, IEnumerable<ITrack> tracks)
+        protected virtual void OnPlaylistEnded(string playlist)
         {
-            if (_playlists.TryGetValue(key, out var channel)) return;
-            channel = new Playlist<ITrack>(key);
-            channel.AddTracks(tracks);
-            _playlists[key] = channel;
+            PlaylistEnded?.Invoke(this, new PlaylistEnded
+            {
+                PlaylistName = playlist
+            });
         }
     }
 }

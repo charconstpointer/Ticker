@@ -82,5 +82,21 @@ namespace Ticker.Tests
 
             string.Join("", outcome.Select(x => x.Title)).Should().Be("23");
         }
+
+        [Fact]
+        public async Task Ticker_OnTick_PlaylistEnded()
+        {
+            const string key = "ticker";
+            var ticker = new Ticker();
+            var tracks = new List<ExampleTrack>
+            {
+                new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(1), Title = "1"},
+            };
+            var playlistEnded = new PlaylistEnded();
+            ticker.AddChannel(key, tracks);
+            ticker.PlaylistEnded += (sender, ended) => playlistEnded = ended;
+            await Task.Delay(TimeSpan.FromSeconds(3));
+            playlistEnded.PlaylistName.Should().Be(key);
+        }
     }
 }
