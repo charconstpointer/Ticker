@@ -13,22 +13,30 @@ namespace Psnfrt
         private static async Task Main()
         {
             var client = new MojepolskieClient(new HttpClient());
-            foreach (var i in Enumerable.Range(4,1))
+            var builder = new TickerBuilder();
+            var tickah = builder
+                .OnTrackChanged(Console.WriteLine)
+                .OnTrackChanged(Console.WriteLine)
+                .OnTrackChanged(async e => await OnChanged(e))
+                .Build();
+            foreach (var i in Enumerable.Range(1, 100))
             {
                 var tracks = (await client.Get(i))?.ToList();
                 if (tracks is null || !tracks.Any()) continue;
                 var ticker = new Ticker.Ticker();
                 var key = $"mojepolskie.{i}";
-                ticker.AddChannel(key, tracks);
-                ticker.TrackChanged += OnTickerOnTrackChanged;
-                ticker.PlaylistEnded += TickerOnPlaylistEnded;
-                Console.WriteLine($"Channel : {i} {Environment.NewLine}" +
-                                  $"Current track : {((MojepolskieTrack) ticker[key]?.Current())?.Title} {Environment.NewLine}" +
-                                  $"Next track : {((MojepolskieTrack) ticker[key]?.Next())?.Title ?? "🙊"} {Environment.NewLine}");
-               
+                tickah.AddChannel(key, tracks);
+                // Console.WriteLine($"Channel : {i} {Environment.NewLine}" +
+                //                   $"Current track : {((MojepolskieTrack) ticker[key]?.Current())?.Title} {Environment.NewLine}" +
+                //                   $"Next track : {((MojepolskieTrack) ticker[key]?.Next())?.Title ?? "🙊"} {Environment.NewLine}");
             }
-            
+
             Console.ReadKey();
+        }
+
+        private static async Task OnChanged(TrackChanged<ITrack> changed)
+        {
+            Console.WriteLine("async");
         }
 
         private static void TickerOnPlaylistEnded(object? sender, PlaylistEnded e)
