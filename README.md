@@ -2,6 +2,7 @@
 ⌚
 ## Basic usage
 ```
+var builder = new TickerBuilder();
 var ticker = builder
                 .OnTrackChanged(Console.WriteLine) //any failure in any handler will cause the chain to break
                 .OnTrackChanged(Console.WriteLine) //you can use sync
