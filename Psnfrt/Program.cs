@@ -20,7 +20,6 @@ namespace Psnfrt
                 .OnTrackChanged(async e => await OnChanged(e))
                 .Precision(TimeSpan.FromSeconds(1))
                 .Build();
-
             ticker.Start();
 
             foreach (var i in Enumerable.Range(1, 100))
