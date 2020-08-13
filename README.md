@@ -1,5 +1,5 @@
 # Ticker
-⌚
+⌚ 🙉
 ## Basic usage
 ```
 var builder = new TickerBuilder();
@@ -10,5 +10,4 @@ var ticker = builder
                 .Precision(TimeSpan.FromSeconds(1)) //indicates how fast will internal clock tick
                 .Build();
 ticker.Start(); //this method will not block
-```
 ```
