@@ -4,6 +4,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Psnfrt.Tracks;
 using Ticker;
+using Ticker.Events;
 
 namespace Psnfrt
 {
@@ -13,19 +14,18 @@ namespace Psnfrt
         {
             var client = new MojepolskieClient(new HttpClient());
             var builder = new TickerBuilder();
-            var tickah = builder
+            var ticker = builder
                 .OnTrackChanged(Console.WriteLine)
                 .OnTrackChanged(Console.WriteLine)
                 .OnTrackChanged(async e => await OnChanged(e))
+                .Precision(TimeSpan.FromSeconds(1))
                 .Build();
-            tickah.Start();
+
+            ticker.Start();
 
             foreach (var i in Enumerable.Range(1, 100))
             {
                 var tracks = (await client.Get(i))?.ToList();
-                if (tracks is null || !tracks.Any()) continue;
-                var ticker = new Ticker.Ticker();
-                var key = $"mojepolskie.{i}";
             }
 
             Console.ReadKey();

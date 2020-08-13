@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Ticker.Events;
 using Ticker.Tests.Mocks.Tracks;
 using Xunit;
 

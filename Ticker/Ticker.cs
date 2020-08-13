@@ -2,6 +2,7 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
+using Ticker.Events;
 
 namespace Ticker
 {
@@ -11,13 +12,22 @@ namespace Ticker
 
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly Thread _watcher;
+        private readonly TimeSpan _tickDelay;
 
 
         public Ticker()
         {
             _watcher = new Thread(OnTick) {IsBackground = true};
             _playlists = new ConcurrentDictionary<string, Playlist<ITrack>>();
-            // _watcher.Start();
+            _tickDelay = TimeSpan.FromSeconds(1);
+        }
+
+
+        public Ticker(TimeSpan timeSpan)
+        {
+            _watcher = new Thread(OnTick) {IsBackground = true};
+            _playlists = new ConcurrentDictionary<string, Playlist<ITrack>>();
+            _tickDelay = timeSpan;
         }
 
         public Playlist<ITrack> this[string index] => _playlists[index];
@@ -48,7 +58,7 @@ namespace Ticker
                     }
                 }
 
-                Thread.Sleep(TimeSpan.FromSeconds(1));
+                Thread.Sleep(_tickDelay);
             }
 
             // ReSharper disable once FunctionNeverReturns

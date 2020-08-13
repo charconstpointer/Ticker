@@ -1,4 +1,4 @@
-﻿namespace Ticker
+﻿namespace Ticker.Events
 {
     public class TrackChanged<T> where T : ITrack
     {
