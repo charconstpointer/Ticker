@@ -5,8 +5,8 @@ namespace Ticker
 {
     public class TickerBuilder
     {
-        private ICollection<Action<TrackChanged<ITrack>>> _actions;
         private readonly Ticker _ticker;
+        private readonly ICollection<Action<TrackChanged<ITrack>>> _actions;
 
         public TickerBuilder()
         {
@@ -18,10 +18,7 @@ namespace Ticker
         {
             _ticker.TrackChanged += (sender, changed) =>
             {
-                foreach (var action in _actions)
-                {
-                    action(changed);
-                }
+                foreach (var action in _actions) action(changed);
             };
             return _ticker;
         }

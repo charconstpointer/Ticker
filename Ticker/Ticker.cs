@@ -11,9 +11,6 @@ namespace Ticker
 
         // ReSharper disable once PrivateFieldCanBeConvertedToLocalVariable
         private readonly Thread _watcher;
-        public Playlist<ITrack> this[string index] => _playlists[index];
-        public event EventHandler<TrackChanged<ITrack>> TrackChanged;
-        public event EventHandler<PlaylistEnded> PlaylistEnded;
 
 
         public Ticker()
@@ -23,16 +20,17 @@ namespace Ticker
             _watcher.Start();
         }
 
+        public Playlist<ITrack> this[string index] => _playlists[index];
+        public event EventHandler<TrackChanged<ITrack>> TrackChanged;
+        public event EventHandler<PlaylistEnded> PlaylistEnded;
+
         private void OnTick()
         {
             while (true)
             {
                 foreach (var playlistsKey in _playlists.Keys)
                 {
-                    if (!_playlists.TryGetValue(playlistsKey, out var channel))
-                    {
-                        continue;
-                    }
+                    if (!_playlists.TryGetValue(playlistsKey, out var channel)) continue;
 
                     var isOutdated = channel.Current()?.Stop < DateTime.UtcNow.AddHours(2);
                     if (!isOutdated) continue;
@@ -40,7 +38,6 @@ namespace Ticker
                     {
                         OnPlaylistEnded(channel.Title);
                         _playlists.Remove(playlistsKey, out _);
-                        // channel.PopTrack();
                     }
                     else
                     {

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,7 +7,7 @@ using Ticker;
 
 namespace Psnfrt
 {
-    class Program
+    internal class Program
     {
         private static async Task Main()
         {

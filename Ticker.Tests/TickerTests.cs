@@ -20,7 +20,7 @@ namespace Ticker.Tests
             {
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(3), Title = "1"},
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(3), Stop = DateTime.Now.AddSeconds(5), Title = "2"},
-                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"},
+                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"}
             };
             ticker.AddChannel(key, tracks);
             ticker.AddChannel(key, tracks);
@@ -35,7 +35,7 @@ namespace Ticker.Tests
             {
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(3), Title = "1"},
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(3), Stop = DateTime.Now.AddSeconds(5), Title = "2"},
-                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"},
+                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"}
             };
             ticker.AddChannel(key, tracks);
             var playlist = ticker[key];
@@ -54,7 +54,7 @@ namespace Ticker.Tests
             {
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(3), Title = "1"},
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(3), Stop = DateTime.Now.AddSeconds(5), Title = "2"},
-                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"},
+                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"}
             };
             ticker.AddChannel(key, tracks);
             var playlist = ticker[key];
@@ -70,15 +70,12 @@ namespace Ticker.Tests
             {
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(3), Title = "1"},
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(3), Stop = DateTime.Now.AddSeconds(5), Title = "2"},
-                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"},
+                new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"}
             };
             var outcome = new List<ExampleTrack>();
             ticker.AddChannel(key, tracks);
             ticker.TrackChanged += (sender, changed) => outcome.Add(changed.Current as ExampleTrack);
-            while (outcome.Count != 2)
-            {
-                await Task.Delay(TimeSpan.FromSeconds(1));
-            }
+            while (outcome.Count != 2) await Task.Delay(TimeSpan.FromSeconds(1));
 
             string.Join("", outcome.Select(x => x.Title)).Should().Be("23");
         }
@@ -90,13 +87,29 @@ namespace Ticker.Tests
             var ticker = new Ticker();
             var tracks = new List<ExampleTrack>
             {
-                new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(1), Title = "1"},
+                new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(1), Title = "1"}
             };
             var playlistEnded = new PlaylistEnded();
             ticker.AddChannel(key, tracks);
             ticker.PlaylistEnded += (sender, ended) => playlistEnded = ended;
             await Task.Delay(TimeSpan.FromSeconds(3));
             playlistEnded.PlaylistName.Should().Be(key);
+        }
+
+        [Fact]
+        public async void Ticker_CurrentAs()
+        {
+            const string key = "ticker";
+            var ticker = new Ticker();
+            var tracks = new List<ExampleTrack>
+            {
+                new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(1), Title = "1"}
+            };
+            ticker.AddChannel(key, tracks);
+            var channel = ticker["ticker"];
+            var current = channel.Current<ExampleTrack>();
+            current.Should().BeOfType<ExampleTrack>();
+            current.Title.Should().Be("1");
         }
     }
 }

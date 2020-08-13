@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Net.Http.Json;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Psnfrt.Extensions;
@@ -13,8 +12,8 @@ namespace Psnfrt
 {
     public class MojepolskieClient
     {
-        private readonly HttpClient _httpClient;
         private readonly string _base;
+        private readonly HttpClient _httpClient;
 
         public MojepolskieClient(HttpClient httpClient)
         {
@@ -29,16 +28,13 @@ namespace Psnfrt
             if (!moje.IsSuccessStatusCode) return null;
             if (id == 68)
             {
-                
             }
+
             try
             {
                 var mojePolskieResponse =
                     JsonSerializer.Deserialize<MojepolskieResponse>(await moje.Content.ReadAsStringAsync());
-                if (!mojePolskieResponse.Songs.Any())
-                {
-                    return null;
-                }
+                if (!mojePolskieResponse.Songs.Any()) return null;
                 for (var i = 0; i < mojePolskieResponse.Songs.Count() - 1; i++)
                 {
                     var current = mojePolskieResponse.Songs.ElementAt(i);

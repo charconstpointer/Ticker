@@ -6,22 +6,25 @@ namespace Ticker
 {
     public class Playlist<T> where T : ITrack
     {
-        public string Title => _title;
-        private readonly Guid _id;
-        private readonly string _title;
         private readonly Queue<T> _tracks;
         private T _current;
 
         public Playlist(string title = null)
         {
-            _id = Guid.NewGuid();
-            _title = title ?? _id.ToString();
+            Title = title ?? Guid.NewGuid().ToString();
             _tracks = new Queue<T>();
         }
+
+        public string Title { get; }
 
         public T Current()
         {
             return _current;
+        }
+
+        public TR Current<TR>() where TR : class, ITrack
+        {
+            return _current as TR;
         }
 
         public T Next()
@@ -46,23 +49,14 @@ namespace Ticker
         public void AddTracks(IEnumerable<T> tracks)
         {
             var notYetPlayed = tracks.Where(track => track.Stop >= DateTime.UtcNow.AddHours(2));
-            foreach (var track in notYetPlayed)
-            {
-                _tracks.Enqueue(track);
-            }
+            foreach (var track in notYetPlayed) _tracks.Enqueue(track);
 
-            if (_current is null && _tracks.TryDequeue(out var current))
-            {
-                _current = current;
-            }
+            if (_current is null && _tracks.TryDequeue(out var current)) _current = current;
         }
 
         public void PopTrack()
         {
-            if (TryGetNext(out _))
-            {
-                _current = _tracks.Dequeue();
-            }
+            if (TryGetNext(out _)) _current = _tracks.Dequeue();
         }
     }
 }
