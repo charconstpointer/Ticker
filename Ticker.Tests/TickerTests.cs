@@ -38,6 +38,7 @@ namespace Ticker.Tests
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"}
             };
             ticker.AddChannel(key, tracks);
+            ticker.Start();
             var playlist = ticker[key];
             playlist.Should().NotBeNull();
             playlist.Title.Should().Be(key);
@@ -57,6 +58,7 @@ namespace Ticker.Tests
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(5), Stop = DateTime.Now.AddSeconds(7), Title = "3"}
             };
             ticker.AddChannel(key, tracks);
+            ticker.Start();
             var playlist = ticker[key];
             ((ExampleTrack) playlist.Next()).Title.Should().Be("2");
         }
@@ -75,6 +77,7 @@ namespace Ticker.Tests
             var outcome = new List<ExampleTrack>();
             ticker.AddChannel(key, tracks);
             ticker.TrackChanged += (sender, changed) => outcome.Add(changed.Current as ExampleTrack);
+            ticker.Start();
             while (outcome.Count != 2) await Task.Delay(TimeSpan.FromSeconds(1));
 
             string.Join("", outcome.Select(x => x.Title)).Should().Be("23");
@@ -92,12 +95,13 @@ namespace Ticker.Tests
             var playlistEnded = new PlaylistEnded();
             ticker.AddChannel(key, tracks);
             ticker.PlaylistEnded += (sender, ended) => playlistEnded = ended;
+            ticker.Start();
             await Task.Delay(TimeSpan.FromSeconds(3));
             playlistEnded.PlaylistName.Should().Be(key);
         }
 
         [Fact]
-        public async void Ticker_CurrentAs()
+        public void Ticker_CurrentAs()
         {
             const string key = "ticker";
             var ticker = new Ticker();
@@ -106,10 +110,13 @@ namespace Ticker.Tests
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(1), Title = "1"}
             };
             ticker.AddChannel(key, tracks);
+            ticker.Start();
             var channel = ticker["ticker"];
             var current = channel.Current<ExampleTrack>();
             current.Should().BeOfType<ExampleTrack>();
             current.Title.Should().Be("1");
+            var current2 = channel.Current<AnotherTrack>();
+            current2.Should().BeNull();
         }
     }
 }

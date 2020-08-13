@@ -18,16 +18,14 @@ namespace Psnfrt
                 .OnTrackChanged(Console.WriteLine)
                 .OnTrackChanged(async e => await OnChanged(e))
                 .Build();
+            tickah.Start();
+
             foreach (var i in Enumerable.Range(1, 100))
             {
                 var tracks = (await client.Get(i))?.ToList();
                 if (tracks is null || !tracks.Any()) continue;
                 var ticker = new Ticker.Ticker();
                 var key = $"mojepolskie.{i}";
-                tickah.AddChannel(key, tracks);
-                // Console.WriteLine($"Channel : {i} {Environment.NewLine}" +
-                //                   $"Current track : {((MojepolskieTrack) ticker[key]?.Current())?.Title} {Environment.NewLine}" +
-                //                   $"Next track : {((MojepolskieTrack) ticker[key]?.Next())?.Title ?? "🙊"} {Environment.NewLine}");
             }
 
             Console.ReadKey();

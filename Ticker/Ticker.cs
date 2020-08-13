@@ -17,7 +17,7 @@ namespace Ticker
         {
             _watcher = new Thread(OnTick) {IsBackground = true};
             _playlists = new ConcurrentDictionary<string, Playlist<ITrack>>();
-            _watcher.Start();
+            // _watcher.Start();
         }
 
         public Playlist<ITrack> this[string index] => _playlists[index];
@@ -52,6 +52,11 @@ namespace Ticker
             }
 
             // ReSharper disable once FunctionNeverReturns
+        }
+
+        public void Start()
+        {
+            _watcher.Start();
         }
 
         public void AddChannel(string key, IEnumerable<ITrack> tracks)

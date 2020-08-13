@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Ticker
 {
-    public class Playlist<T> where T : ITrack
+    public class Playlist<T> where T : class, ITrack
     {
         private readonly Queue<T> _tracks;
         private T _current;
@@ -30,8 +30,6 @@ namespace Ticker
         public T Next()
         {
             return _tracks.TryPeek(out var next) ? next : default;
-
-            // throw new ApplicationException($"Playlist #{_id} #{_title} is empty");
         }
 
         public bool TryGetNext(out T track)

@@ -65,7 +65,8 @@ namespace Ticker.Tests
                 new ExampleTrack {Start = DateTime.Now.AddSeconds(-1), Stop = DateTime.Now.AddSeconds(3), Title = "1"}
             };
             playlist.AddTracks(tracks);
-            Assert.Throws<ApplicationException>(() => playlist.Next());
+            var next = playlist.Next();
+            next.Should().BeNull();
         }
     }
 }
